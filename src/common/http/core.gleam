@@ -1,4 +1,4 @@
-import common/http/errors.{type ApiError}
+import common/http/errors.{type ApiError, err_not_found}
 import gleam/json
 import wisp
 
@@ -23,4 +23,10 @@ pub fn reply_data(status: Int, data: json.Json) -> wisp.Response {
 pub fn reply_error(error: ApiError) -> wisp.Response {
   let err = errors.encode_error(error)
   wisp.json_response(json.to_string_builder(err), error.status)
+}
+
+pub fn route_not_found() -> wisp.Response {
+  let err = errors.with_detail(err_not_found, "Route not found")
+  let encoded = errors.encode_error(err)
+  wisp.json_response(json.to_string_builder(encoded), 404)
 }
