@@ -14,16 +14,16 @@ pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
         _ -> route_not_found()
       }
     }
-    ["comments"] -> {
+    ["todos"] -> {
       case req.method {
-        Get -> handlers.list_comments()
-        Post -> handlers.create_comment(req)
+        Get -> handlers.handle_get_todos()
+        Post -> handlers.handle_create_todo(req)
         _ -> route_not_found()
       }
     }
-    ["comments", id] -> {
+    ["todos", id] -> {
       case req.method {
-        Get -> handlers.show_comment(req, id)
+        Get -> handlers.handle_get_todo(req, id)
         _ -> route_not_found()
       }
     }
