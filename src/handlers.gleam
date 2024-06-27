@@ -1,10 +1,12 @@
+import common/http/core.{reply_error}
+import common/http/errors.{err_not_found}
 import gleam/string_builder
 import wisp.{type Request, type Response, ok}
 
+// TODO WIP
+
 pub fn list_comments() -> Response {
-  let html = string_builder.from_string("Comments!")
-  ok()
-  |> wisp.html_body(html)
+  reply_error(err_not_found)
 }
 
 pub fn create_comment(_req: Request) -> Response {
