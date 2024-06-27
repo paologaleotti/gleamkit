@@ -1,3 +1,4 @@
+import config
 import gleam/erlang/process
 import mist
 import router
@@ -10,8 +11,11 @@ pub fn main() {
   // load this from somewhere so that it is not regenerated on every restart.
   let secret_key_base = wisp.random_string(64)
 
+  let ctx = config.init_context()
+  let handler = router.handle_request(_, ctx)
+
   let assert Ok(_) =
-    wisp.mist_handler(router.handle_request, secret_key_base)
+    wisp.mist_handler(handler, secret_key_base)
     |> mist.new
     |> mist.port(8000)
     |> mist.start_http

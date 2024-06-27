@@ -1,9 +1,10 @@
 import common/http/core
+import config.{type AppContext}
 import gleam/http.{Get, Post}
 import handlers
 import wisp.{type Request, type Response, not_found, ok}
 
-pub fn handle_request(req: Request) -> Response {
+pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
   use req <- core.middleware(req)
 
   case wisp.path_segments(req) {
