@@ -22,7 +22,7 @@ aiming to provide a simple and opinionated setup that is **production-ready**
 - [x] API error handling
 - [ ] Structured logging
 - [ ] Early returns for error handling
-- [ ] Env variables
+- [x] Env variables
 
 ## Snippets
 
