@@ -14,15 +14,11 @@ pub fn encode_todo(td: Todo) -> Json {
 }
 
 pub type NewTodo {
-  NewTodo(title: String, pippo: String)
+  NewTodo(title: String)
 }
 
 pub fn decode_new_todo(json: Dynamic) -> Result(NewTodo, DecodeErrors) {
   let decoder =
-    dynamic.decode2(
-      NewTodo,
-      dynamic.field("title", of: dynamic.string),
-      dynamic.field("pippo", of: dynamic.string),
-    )
+    dynamic.decode1(NewTodo, dynamic.field("title", of: dynamic.string))
   decoder(json)
 }

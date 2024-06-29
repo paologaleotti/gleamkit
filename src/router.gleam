@@ -1,7 +1,7 @@
 import common/http/core.{route_not_found}
 import config.{type AppContext}
 import gleam/http.{Get, Post}
-import handlers
+import handlers/todos
 import wisp.{type Request, type Response, ok}
 
 pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
@@ -16,14 +16,14 @@ pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
     }
     ["todos"] -> {
       case req.method {
-        Get -> handlers.handle_get_todos()
-        Post -> handlers.handle_create_todo(req)
+        Get -> todos.handle_get_todos()
+        Post -> todos.handle_create_todo(req)
         _ -> route_not_found()
       }
     }
     ["todos", id] -> {
       case req.method {
-        Get -> handlers.handle_get_todo(req, id)
+        Get -> todos.handle_get_todo(req, id)
         _ -> route_not_found()
       }
     }
