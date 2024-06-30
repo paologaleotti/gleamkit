@@ -4,4 +4,8 @@ build:
 run:
 	@gleam run
 
-.PHONY: build run
+clean:
+	gleam clean
+	rm -rf build
+
+.PHONY: build run clean
