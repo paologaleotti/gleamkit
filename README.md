@@ -50,15 +50,21 @@ Easy API custom error handling:
 
 ```gleam
 pub fn handle_get_todo(_req: Request, id: String) -> Response {
-    let item = list.find(todos, fn(t) { t.id == todo_id })
+  case int.parse(id) {
+    // Reply with a detailed API error
+    Error(_) -> reply_error_detailed(BadRequest, "Invalid todo ID")
 
-    // Match on the result and reply with data or API error
-    case item {
+    Ok(todo_id) -> {
+      let item = list.find(todos, fn(t) { t.id == todo_id })
+
+      // Match on the result and reply with data or API error
+      case item {
         Ok(item) -> reply_data(200, todos.encode_todo(item))
-        Error(_) -> reply_error(err_not_found)
+        Error(_) -> reply_error(NotFound)
+      }
     }
+  }
 }
-
 ```
 
 Default errors (like err_not_found) can be found in `common/errors` module, and you can append a detail message to them using the `with_detail`  function.

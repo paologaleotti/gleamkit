@@ -1,23 +1,9 @@
-import common/http/errors.{
-  type ApiError, err_bad_request, err_not_found, with_detail,
-}
+import common/http/errors.{with_detail}
 import gleam/dynamic
 import gleam/json
 import gleam/list
 import gleam/string
 import wisp
-
-pub fn middleware(
-  req: wisp.Request,
-  handle_request: fn(wisp.Request) -> wisp.Response,
-) -> wisp.Response {
-  let req = wisp.method_override(req)
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-
-  handle_request(req)
-}
 
 /// reply_data returns a Response with generic JSON data
 pub fn reply_data(status: Int, data: json.Json) -> wisp.Response {
@@ -31,15 +17,20 @@ pub fn reply_list(status: Int, items: List(json.Json)) -> wisp.Response {
 }
 
 /// reply_error encodes an ApiError as JSON and returns a Response
-pub fn reply_error(error: ApiError) -> wisp.Response {
-  let err = errors.encode_error(error)
-  wisp.json_response(json.to_string_builder(err), error.status)
+pub fn reply_error(error: errors.HttpError) -> wisp.Response {
+  let api_err = errors.error_to_api(error)
+  let err = errors.encode_error(api_err)
+  wisp.json_response(json.to_string_builder(err), api_err.status)
 }
 
-pub fn route_not_found() -> wisp.Response {
-  let err = errors.with_detail(err_not_found, "Route not found")
-  let encoded = errors.encode_error(err)
-  wisp.json_response(json.to_string_builder(encoded), 404)
+/// reply_error_detailed appends a detail message to an ApiError and returns a Response
+pub fn reply_error_detailed(
+  error: errors.HttpError,
+  detail: String,
+) -> wisp.Response {
+  let api_err = errors.error_to_api(error)
+  let err = errors.encode_error(with_detail(api_err, detail))
+  wisp.json_response(json.to_string_builder(err), api_err.status)
 }
 
 /// decode_body decodes the JSON body directly into a type using the provided decoder.
@@ -56,7 +47,7 @@ pub fn decode_body(
     Ok(data) -> next(data)
     Error(errors) -> {
       let msg = format_decode_error(errors)
-      reply_error(with_detail(err_bad_request, msg))
+      reply_error_detailed(errors.BadRequest, msg)
     }
   }
 }

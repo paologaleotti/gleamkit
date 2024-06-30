@@ -1,5 +1,7 @@
-import common/http/core.{decode_body, reply_data, reply_error, reply_list}
-import common/http/errors.{err_bad_request, err_not_found}
+import common/http/core.{
+  decode_body, reply_data, reply_error, reply_error_detailed, reply_list,
+}
+import common/http/errors.{BadRequest, NotFound}
 import common/models/todos
 import gleam/int
 import gleam/list
@@ -25,13 +27,13 @@ pub fn handle_create_todo(req: Request) -> Response {
 pub fn handle_get_todo(_req: Request, id: String) -> Response {
   case int.parse(id) {
     // TODO how to avoid nesting? how to do early return?
-    Error(_) -> reply_error(err_bad_request)
+    Error(_) -> reply_error_detailed(BadRequest, "Invalid todo ID")
     Ok(todo_id) -> {
       let item = list.find(todos, fn(t) { t.id == todo_id })
 
       case item {
         Ok(item) -> reply_data(200, todos.encode_todo(item))
-        Error(_) -> reply_error(err_not_found)
+        Error(_) -> reply_error(NotFound)
       }
     }
   }
