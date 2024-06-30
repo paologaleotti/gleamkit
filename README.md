@@ -72,6 +72,6 @@ Default HTTP errors (like NotFound) can be found in `common/errors` module, and 
 ## Build and run
 
 ```sh
-gleam build  # Build the project
-gleam run   # Run the service
+make  # Build the project
+make run   # Run the service
 ```
