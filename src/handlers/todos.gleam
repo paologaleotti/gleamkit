@@ -25,6 +25,7 @@ pub fn handle_create_todo(req: Request) -> Response {
 pub fn handle_get_todo(_req: Request, id: String) -> Response {
   case int.parse(id) {
     // TODO how to avoid nesting? how to do early return?
+    Error(_) -> reply_error(err_bad_request)
     Ok(todo_id) -> {
       let item = list.find(todos, fn(t) { t.id == todo_id })
 
@@ -33,6 +34,5 @@ pub fn handle_get_todo(_req: Request, id: String) -> Response {
         Error(_) -> reply_error(err_not_found)
       }
     }
-    Error(_) -> reply_error(err_bad_request)
   }
 }
