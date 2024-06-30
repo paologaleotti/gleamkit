@@ -67,7 +67,7 @@ pub fn handle_get_todo(_req: Request, id: String) -> Response {
 }
 ```
 
-Default errors (like err_not_found) can be found in `common/errors` module, and you can append a detail message to them using the `with_detail`  function.
+Default HTTP errors (like NotFound) can be found in `common/errors` module, and you can append a detail message to them using the `reply_error_detailed`  function.
 
 ## Build and run
 
