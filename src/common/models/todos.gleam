@@ -1,3 +1,4 @@
+import decode
 import gleam/dynamic.{type DecodeErrors, type Dynamic}
 import gleam/json.{type Json}
 
@@ -18,7 +19,10 @@ pub type NewTodo {
 }
 
 pub fn decode_new_todo(json: Dynamic) -> Result(NewTodo, DecodeErrors) {
-  let decoder =
-    dynamic.decode1(NewTodo, dynamic.field("title", of: dynamic.string))
-  decoder(json)
+  decode.into({
+    use title <- decode.parameter
+    NewTodo(title)
+  })
+  |> decode.field("title", decode.string)
+  |> decode.from(json)
 }
