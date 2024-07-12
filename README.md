@@ -67,6 +67,23 @@ pub fn handle_get_todo(_req: Request, id: String) -> Response {
 }
 ```
 
+Direct method/path routing:
+
+```gleam
+pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
+  use req <- middleware.default_middleware(req)
+  use req <- cors.wisp_middleware(req, default_cors())
+
+  case req.method, wisp.path_segments(req) {
+    Get, [] -> ok()
+    Get, ["todos"] -> todos.handle_get_todos()
+    Post, ["todos"] -> todos.handle_create_todo(req)
+    Get, ["todos", id] -> todos.handle_get_todo(req, id)
+    _, _ -> route_not_found()
+  }
+}
+```
+
 Default HTTP errors (like NotFound) can be found in `common/errors` module, and you can append a detail message to them using the `reply_error_detailed`  function.
 
 ## Build and run
