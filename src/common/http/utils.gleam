@@ -26,6 +26,7 @@ pub fn default_cors() {
   |> cors.allow_method(http.Patch)
   |> cors.allow_method(http.Delete)
   |> cors.allow_method(http.Options)
+  |> cors.max_age(7_200_000)
 }
 
 /// route_not_found returns a 404 Not Found with detailed error message
