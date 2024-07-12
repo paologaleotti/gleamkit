@@ -10,26 +10,11 @@ pub fn handle_request(req: Request, _ctx: AppContext) -> Response {
   use req <- middleware.default_middleware(req)
   use req <- cors.wisp_middleware(req, default_cors())
 
-  case wisp.path_segments(req) {
-    [] -> {
-      case req.method {
-        Get -> ok()
-        _ -> route_not_found()
-      }
-    }
-    ["todos"] -> {
-      case req.method {
-        Get -> todos.handle_get_todos()
-        Post -> todos.handle_create_todo(req)
-        _ -> route_not_found()
-      }
-    }
-    ["todos", id] -> {
-      case req.method {
-        Get -> todos.handle_get_todo(req, id)
-        _ -> route_not_found()
-      }
-    }
-    _ -> route_not_found()
+  case req.method, wisp.path_segments(req) {
+    Get, [] -> ok()
+    Get, ["todos"] -> todos.handle_get_todos()
+    Post, ["todos"] -> todos.handle_create_todo(req)
+    Get, ["todos", id] -> todos.handle_get_todo(req, id)
+    _, _ -> route_not_found()
   }
 }
