@@ -52,6 +52,23 @@ pub fn decode_body(
   }
 }
 
+/// unpack_or_reply works as an early return for errors. 
+/// It matches the provided Result and if it's an Error it
+/// calls the callback passing the error as an argument.
+/// 
+/// If possible, avoid abusing this function 
+/// as it can make the code less functional-style and harder to read.
+pub fn unpack_or_reply(
+  res: Result(a, e),
+  callback: fn(e) -> reply,
+  next: fn(a) -> reply,
+) -> reply {
+  case res {
+    Ok(data) -> next(data)
+    Error(e) -> callback(e)
+  }
+}
+
 fn format_decode_error(errors: dynamic.DecodeErrors) -> String {
   list.map(errors, fn(e) {
     "Expected "

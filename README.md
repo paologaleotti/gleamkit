@@ -50,21 +50,21 @@ Easy API custom error handling:
 
 ```gleam
 pub fn handle_get_todo(_req: Request, id: String) -> Response {
-  case int.parse(id) {
+  // Early reply utility function to handle errors
+  use todo_id <- unpack_or_reply(int.parse(id), fn(_) {
     // Reply with a detailed API error
-    Error(_) -> reply_error_detailed(BadRequest, "Invalid todo ID")
+    reply_error_detailed(BadRequest, "Invalid todo ID")
+  })
 
-    Ok(todo_id) -> {
-      let item = list.find(todos, fn(t) { t.id == todo_id })
+  let item = list.find(todos, fn(t) { t.id == todo_id })
 
-      // Match on the result and reply with data or API error
-      case item {
-        Ok(item) -> reply_data(200, todos.encode_todo(item))
-        Error(_) -> reply_error(NotFound)
-      }
-    }
+  // Match on the result and reply with data or API error
+  case item {
+    Ok(item) -> reply_data(200, todos.encode_todo(item))
+    Error(_) -> reply_error(NotFound)
   }
 }
+
 ```
 
 Direct method/path routing:

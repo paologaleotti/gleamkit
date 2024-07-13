@@ -1,5 +1,6 @@
 import common/http/core.{
   decode_body, reply_data, reply_error, reply_error_detailed, reply_list,
+  unpack_or_reply,
 }
 import common/http/errors.{BadRequest, NotFound}
 import common/models/todos
@@ -25,16 +26,14 @@ pub fn handle_create_todo(req: Request) -> Response {
 }
 
 pub fn handle_get_todo(_req: Request, id: String) -> Response {
-  case int.parse(id) {
-    // TODO how to avoid nesting? how to do early return?
-    Error(_) -> reply_error_detailed(BadRequest, "Invalid todo ID")
-    Ok(todo_id) -> {
-      let item = list.find(todos, fn(t) { t.id == todo_id })
+  use todo_id <- unpack_or_reply(int.parse(id), fn(_) {
+    reply_error_detailed(BadRequest, "Invalid todo ID")
+  })
 
-      case item {
-        Ok(item) -> reply_data(200, todos.encode_todo(item))
-        Error(_) -> reply_error(NotFound)
-      }
-    }
+  let item = list.find(todos, fn(t) { t.id == todo_id })
+
+  case item {
+    Ok(item) -> reply_data(200, todos.encode_todo(item))
+    Error(_) -> reply_error(NotFound)
   }
 }
