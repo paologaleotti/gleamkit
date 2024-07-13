@@ -27,7 +27,7 @@ only giving the user the essentials for real, production use without going crazy
 - [x] Body valiadation
 - [x] API error handling
 - [ ] Structured logging
-- [ ] Early returns for error handling
+- [x] Early returns for error handling
 - [x] Env variables
 
 ## Snippets
