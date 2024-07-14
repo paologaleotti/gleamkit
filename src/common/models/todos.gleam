@@ -18,11 +18,11 @@ pub type NewTodo {
   NewTodo(title: String)
 }
 
-pub fn decode_new_todo(json: Dynamic) -> Result(NewTodo, DecodeErrors) {
+pub fn decode_new_todo(input: Dynamic) -> Result(NewTodo, DecodeErrors) {
   decode.into({
     use title <- decode.parameter
     NewTodo(title)
   })
   |> decode.field("title", decode.string)
-  |> decode.from(json)
+  |> decode.from(input)
 }
