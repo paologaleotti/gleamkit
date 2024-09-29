@@ -3,6 +3,7 @@ import gleam/erlang/process
 import mist
 import router
 import wisp
+import wisp/wisp_mist
 
 pub fn main() {
   wisp.configure_logger()
@@ -15,7 +16,7 @@ pub fn main() {
   let handler = router.handle_request(_, ctx)
 
   let assert Ok(_) =
-    wisp.mist_handler(handler, secret_key_base)
+    wisp_mist.handler(handler, secret_key_base)
     |> mist.new
     |> mist.port(8000)
     |> mist.start_http
